@@ -1,4 +1,9 @@
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Nexaform per-domain dual-window request throttle.
@@ -27,6 +32,39 @@ public class Solution {
     public static final String TOO_MANY = "{status: 429, message: Too many requests}";
 
     public List<String> throttle(List<String> requests) {
-        throw new UnsupportedOperationException("throttle is not implemented yet");
+        Map<String, Deque<Integer>> acceptedByDomain = new HashMap<>();
+        List<String> responses = new ArrayList<>(requests.size());
+
+        for (int currentTime = 0; currentTime < requests.size(); currentTime++) {
+            String domain = requests.get(currentTime);
+            Deque<Integer> acceptedTimes = acceptedByDomain.computeIfAbsent(domain, ignored -> new ArrayDeque<>());
+
+            int thirtySecondWindowStart = currentTime - 29;
+            while (!acceptedTimes.isEmpty() && acceptedTimes.peekFirst() < thirtySecondWindowStart) {
+                acceptedTimes.pollFirst();
+            }
+
+            int acceptedInLastThirtySeconds = acceptedTimes.size();
+            int acceptedInLastFiveSeconds = 0;
+            int fiveSecondWindowStart = currentTime - 4;
+            for (int acceptedTime : acceptedTimes) {
+                if (acceptedTime >= fiveSecondWindowStart) {
+                    acceptedInLastFiveSeconds++;
+                }
+            }
+
+            boolean exceedsFiveSecondLimit = acceptedInLastFiveSeconds >= 2;
+            boolean exceedsThirtySecondLimit = acceptedInLastThirtySeconds >= 5;
+
+            if (exceedsFiveSecondLimit || exceedsThirtySecondLimit) {
+                responses.add(TOO_MANY);
+                continue;
+            }
+
+            acceptedTimes.addLast(currentTime);
+            responses.add(OK);
+        }
+
+        return responses;
     }
 }
