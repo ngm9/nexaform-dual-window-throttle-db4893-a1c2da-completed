@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Node / TypeScript
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Java
+target/
+*.class
+.gradle/
+
+# C++
+*.o
+*.out
+test_solution
+a.out
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store

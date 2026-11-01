@@ -1,0 +1,12 @@
+{
+  "name": "nexaform-dual-window-throttle",
+  "version": "1.0.0",
+  "description": "Nexaform per-domain dual-window request throttle",
+  "main": "solution.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
